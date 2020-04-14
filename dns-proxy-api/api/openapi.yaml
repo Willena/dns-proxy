@@ -1,0 +1,271 @@
+openapi: 3.0.0
+info:
+  title: dns-proxy-api
+  description: Dns proxy API
+  contact:
+    email: guillaume@villena.me
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /:
+    get:
+      description: basic information and statistics
+      operationId: rootGET
+      responses:
+        "200":
+          description: stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+      x-swagger-router-controller: Default
+  /categories:
+    get:
+      summary: list of available categories to choose from
+      description: |
+        return a list of categories loaded.
+      operationId: categoriesGET
+      responses:
+        "200":
+          description: A list of categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesList'
+      x-swagger-router-controller: Default
+  /domains:
+    get:
+      description: A list of known domains
+      operationId: domainsGET
+      responses:
+        "200":
+          description: A list of knwon domains
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainList'
+      x-swagger-router-controller: Default
+  /domains/{domain}:
+    get:
+      description: view the category of a domain
+      operationId: domainsDomainGET
+      parameters:
+      - name: domain
+        in: path
+        description: Domain Name
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: the list of categories for the domain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesForDomain'
+        "404":
+          description: Element not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemNotFound'
+      x-swagger-router-controller: Default
+  /users:
+    get:
+      summary: list filtered users
+      description: |
+        List user names to whitch a filter is applied
+      operationId: usersGET
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+        "404":
+          description: Element not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemNotFound'
+      x-swagger-router-controller: Default
+  /users/{username}:
+    get:
+      description: Retrieve the current configuration for a user
+      operationId: usersUsernameGET
+      parameters:
+      - name: username
+        in: path
+        description: the user name to look at
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The configuration for the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserConfiguration'
+        "404":
+          description: Element not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemNotFound'
+      x-swagger-router-controller: Default
+    put:
+      description: Update the current configuration of the user
+      operationId: usersUsernamePUT
+      parameters:
+      - name: username
+        in: path
+        description: the user name to update at
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Update the user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserConfiguration'
+      responses:
+        "200":
+          description: returns the updated user configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserConfiguration'
+        "404":
+          description: Element not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemNotFound'
+      x-swagger-router-controller: Default
+components:
+  schemas:
+    Stats:
+      type: object
+    UserConfiguration:
+      required:
+      - block
+      - hosts
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: Marie
+        hosts:
+          type: array
+          items:
+            type: string
+            example: 192.168.0.33
+        block:
+          $ref: '#/components/schemas/UserConfiguration_block'
+      example:
+        hosts:
+        - 192.168.0.33
+        - 192.168.0.33
+        name: Marie
+        block:
+          categories:
+          - adult
+          - adult
+    CategoriesForDomain:
+      required:
+      - categories
+      - domain
+      type: object
+      properties:
+        domain:
+          type: string
+          example: youtube.com
+        categories:
+          type: array
+          items:
+            type: string
+            example: video
+      example:
+        domain: youtube.com
+        categories:
+        - video
+        - video
+    CategoriesList:
+      required:
+      - data
+      - len
+      type: object
+      properties:
+        len:
+          type: number
+          example: 1
+        data:
+          type: array
+          items:
+            type: string
+            example: adult
+      example:
+        len: 1
+        data:
+        - adult
+        - adult
+    UserList:
+      required:
+      - data
+      - len
+      type: object
+      properties:
+        len:
+          type: number
+          example: 1
+        data:
+          type: array
+          items:
+            type: string
+            example: Marie
+      example:
+        len: 1
+        data:
+        - Marie
+        - Marie
+    DomainList:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+          example: mycat
+    ItemNotFound:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+          example: The content cannot be found
+    UserConfiguration_block:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+            example: adult
+      example:
+        categories:
+        - adult
+        - adult

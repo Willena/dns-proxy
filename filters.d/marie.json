@@ -1,0 +1,15 @@
+{
+  "name": "Marie",
+  "hosts": [
+    "127.0.0.1",
+    "192.168.0.15"
+  ],
+  "block": {
+    "categories": [
+      "adult",
+      "porn",
+      "games",
+      "socialnet"
+    ]
+  }
+}

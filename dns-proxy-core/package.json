@@ -16,7 +16,7 @@
     "body-parser": "^1.19.0",
     "chokidar": "^3.3.1",
     "debug": "^4.0.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-generator": "^4.16.1",
     "native-dns-packet": "~0.1.1",
     "rc": "^1.2.8",
